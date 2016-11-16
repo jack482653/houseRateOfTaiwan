@@ -87,6 +87,12 @@ countrysAvgDict = countrysAvgRDD.map(
 ).collectAsMap()
 with open('countrysAvg.json', 'w') as outfile:
     json.dump(countrysAvgDict, outfile, ensure_ascii=False)
+townsAvgRDD = dealsDF3.groupBy('鄉鎮市區').agg({'單價每坪': 'mean'}).rdd
+townsAvgDict = townsAvgRDD.map(
+    lambda x: (x['鄉鎮市區'], x['avg(單價每坪)'])
+).collectAsMap()
+with open('townsAvg.json', 'w') as outfile:
+    json.dump(townsAvgDict, outfile, ensure_ascii=False)
 # .saveAsTextFile('countrys_agg.json')
 # results = ss.sql(
 #     u'SELECT Town, Num, Amount, AmountPerM2 FROM deals'
