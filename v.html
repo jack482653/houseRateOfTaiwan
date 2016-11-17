@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<svg viewBox="0 0 800 600"></svg>
+<link rel="stylesheet" href="//rawgithub.com/Caged/d3-tip/master/examples/example-styles.css">
+<svg></svg>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script src="https://d3js.org/topojson.v1.min.js"></script>
 <script src="https://d3js.org/d3-array.v1.min.js"></script>
@@ -18,10 +19,11 @@ var jsonpath = "Taiwan.TopoJSON/topojson/counties.json";
 	var width = 800,
 		height = 600;
 	var svg = d3.select('svg');
+	svg.attr('width', width).attr('height', height);
 	var df = d3.format('.2f');
 	var tip = d3.tip()
 		.attr('class', 'd3-tip')
-		.offset([-10, 0])
+		.offset([10, 10])
 		.html(function(d) {
 			return "<strong>" + d.properties.name +":</strong> <span style='color:red'>" + df(d.properties.density / 10000.0) + "萬</span>";
 		});
