@@ -81,21 +81,23 @@ dealsDF3 = dealsDF2.withColumn(
         3.3058 * dealsDF2['總價元'] / dealsDF2['土地移轉總面積平方公尺']
     ).otherwise(3.3058 * dealsDF2['單價每平方公尺'])
 )
-countrysAvgRDD = dealsDF3.groupBy('縣市').agg({'單價每坪': 'mean'}).rdd
-countrysAvgDict = countrysAvgRDD.map(
+
+# Calculate rate per county
+countiesAvgRDD = dealsDF3.groupBy('縣市').agg({'單價每坪': 'mean'}).rdd
+countiesAvgDict = countiesAvgRDD.map(
     lambda x: (x['縣市'], x['avg(單價每坪)'])
 ).collectAsMap()
-with open('countrysAvg.json', 'w') as outfile:
-    json.dump(countrysAvgDict, outfile, ensure_ascii=False)
-townsAvgRDD = dealsDF3.groupBy('鄉鎮市區').agg({'單價每坪': 'mean'}).rdd
-townsAvgDict = townsAvgRDD.map(
-    lambda x: (x['鄉鎮市區'], x['avg(單價每坪)'])
-).collectAsMap()
-with open('townsAvg.json', 'w') as outfile:
-    json.dump(townsAvgDict, outfile, ensure_ascii=False)
-# .saveAsTextFile('countrys_agg.json')
-# results = ss.sql(
-#     u'SELECT Town, Num, Amount, AmountPerM2 FROM deals'
-# ).withColumn(
-#     'Amount', udfstring_to_float('Amount')
-# ).show(10000)
+with open('Taiwan.rate/countiesAvg.json', 'w') as outfile:
+    json.dump(countiesAvgDict, outfile, ensure_ascii=False)
+
+# Calculate rate per town
+townsAvgRDD = dealsDF3.groupBy(
+    '鄉鎮市區', '縣市'
+).agg({'單價每坪': 'mean'}).rdd
+townsAvgs = townsAvgRDD.map(
+    lambda x: (x['縣市'], (x['鄉鎮市區'], x['avg(單價每坪)']))
+).groupByKey().mapValues(dict).collect()
+for k, v in townsAvgs:
+    filename = 'Taiwan.rate/towns/%s-townsAvg.json' % (k)
+    with open(filename, 'w') as outfile:
+        json.dump(v, outfile, ensure_ascii=False)

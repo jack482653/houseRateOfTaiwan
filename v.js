@@ -12,10 +12,10 @@ var jsonpath = "Taiwan.TopoJSON/topojson/counties.json";
 		.html(function(d) {
 			return "<strong>" + d.properties.name +":</strong> <span style='color:red'>" + df(d.properties.density / 10000.0) + "萬</span>";
 		});
-	load = function(type, id) {
+	load = function(type, id, name) {
 		var mappath = 'Taiwan.TopoJSON/topojson/' +
             		(type === 'towns' ? 'towns/towns-' + id : 'counties') + '.json';
-		var avgpath = (type === 'towns' ? 'towns' : 'countrys') + 'Avg.json';
+		var avgpath = 'Taiwan.rate/' + (type === 'towns' ? 'towns/' + name + '-towns' : 'counties') + 'Avg.json';
 		d3.json(mappath, function(error, data) {
 			if (error) throw error;
 
@@ -55,13 +55,15 @@ var jsonpath = "Taiwan.TopoJSON/topojson/counties.json";
 						if(!d3.event)
 							return;
 						id = d.properties.id;
+						name = encodeURIComponent(d.properties.name);
 						d3.event.stopPropagation();
 						if(type === 'towns') {
 							t = '';
 							id = '';
+							name = '';
 						} else
 							t = 'towns';
-						location.search = unescape(encodeURI('type=' + t + '&id=' + id));
+						location.search = unescape(encodeURI('type=' + t + '&id=' + id + '&name=' + name));
 
 					}).on('mouseover', function(d, i) {
 						d3.select(this).style(
@@ -91,5 +93,5 @@ var jsonpath = "Taiwan.TopoJSON/topojson/counties.json";
 	};
 
 	params = parseQueryString(location.search.substr(1));
-	load(params['type'], params['id']);
+	load(params['type'], params['id'], params['name']);
 })();
