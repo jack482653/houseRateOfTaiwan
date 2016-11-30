@@ -2,11 +2,10 @@
 
 示範 Spark 計算台灣各地不動產每坪單價以及視覺化。
 
-![Visualization of House Rate of Taiwan](http://imgur.com/a/LhA6k)
-
+![Visualization of House Rate of Taiwan](http://i.imgur.com/G75PIbA.png)
 ## Requirement
 
-![Spark 2.0.2](http://spark.apache.org/)
+[Spark 2.0.2](http://spark.apache.org/)
 
 ## Data Source
 
