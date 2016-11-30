@@ -2,7 +2,7 @@ make all: generate_data run_server
 
 generate_data:
 	mkdir -p Taiwan.rate/towns 
-	spark-submit main.py
+	spark-submit parse.py
 
 run_server:
 	python -m SimpleHTTPServer 8080
