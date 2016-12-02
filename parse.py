@@ -5,6 +5,8 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import when, udf
 from pyspark.sql.types import StructType, StructField, StringType
 import json
+import os
+import shutil
 import sys
 
 reload(sys)
@@ -81,6 +83,11 @@ dealsDF3 = dealsDF2.withColumn(
         3.3058 * dealsDF2['總價元'] / dealsDF2['土地移轉總面積平方公尺']
     ).otherwise(3.3058 * dealsDF2['單價每平方公尺'])
 )
+
+# check if ouput dir exists or not
+if os.path.exists('Taiwan.rate'):
+    shutil.rmtree('Taiwan.rate')
+os.makedirs('Taiwan.rate/towns')
 
 # Calculate rate per county
 countiesAvgRDD = dealsDF3.groupBy('縣市').agg({'單價每坪': 'mean'}).rdd
